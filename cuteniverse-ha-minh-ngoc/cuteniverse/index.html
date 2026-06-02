@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LOVE Hà Minh Ngọc 💗" />
+  <title>LOVE Hà Minh Ngọc 💗</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💗</text></svg>" />
+  <link rel="stylesheet" href="./assets/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.152.2/build/three.module.js",
+      "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.152.2/examples/jsm/controls/OrbitControls.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="container">
+    <!-- Nút âm thanh -->
+    <button id="toggle-audio" class="btn-audio-toggle text-white"
+      style="position:absolute;top:14px;right:14px;z-index:999;">
+      <i id="audio-icon" class="fa-solid fa-volume-xmark"></i>
+    </button>
+
+    <!-- Cảnh báo xoay ngang (mobile) -->
+    <div id="landscape-warning">
+      <div class="warning-content">
+        <div class="rotate-icon"></div>
+        <h1>LOVE</h1>
+        <h1>Hà Minh Ngọc</h1>
+        <p style="font-size:0.6em">Bạn hãy xoay ngang màn hình nha!</p>
+        <p style="font-size:0.6em">Nhớ chạm vào tinh cầu ở giữa để mở quà bí mật nha 💗</p>
+        <div class="stars-bg"></div>
+      </div>
+    </div>
+
+    <!-- Overlay tối khi mở quà -->
+    <div id="dark-overlay"></div>
+
+    <!-- Panel quà bí mật -->
+    <div id="info"></div>
+  </div>
+
+  <script type="module" src="./assets/galaxy.js"></script>
+
+  <script>
+    // ===== Cấu hình cá nhân hóa =====
+    window.dataLove2Loveloom = {
+      template: "galaxy",
+      data: {
+        keychain: {
+          name: "LOVE Hà Minh Ngọc",
+          phone: "",
+          // Tin nhắn bí mật hiện ra khi click vào tinh cầu:
+          address: "Vũ trụ này thật đẹp vì có em trong đó 🌸\nCảm ơn em đã là một phần trong cuộc sống của anh 💗",
+        },
+        ringTexts: ["LOVE Hà Minh Ngọc"],
+        // Thêm link ảnh vào đây (public URL):
+        images: [
+          // "https://link-anh-cua-ban-1.jpg",
+          // "https://link-anh-cua-ban-2.jpg",
+        ],
+      },
+    };
+
+    // ===== Quản lý nhạc =====
+    const musicManager = {
+      audio: null,
+      isPlaying: false,
+
+      init() {
+        this.audio = new Audio('./assets/music.mp3');
+        this.audio.loop = true;
+        this.audio.volume = 0.7;
+        this.audio.preload = 'auto';
+        this.audio.setAttribute('playsinline', '');
+
+        this.audio.onplay  = () => { this.isPlaying = true;  this.updateUI(); };
+        this.audio.onpause = () => { this.isPlaying = false; this.updateUI(); };
+
+        // Tự động phát khi người dùng tương tác lần đầu
+        document.addEventListener('DOMContentLoaded', () => {
+          if (!this.isPlaying) {
+            this.audio.play().catch(err => console.warn('Không thể phát nhạc:', err));
+          }
+        }, { once: true });
+
+        this.updateUI();
+      },
+
+      togglePlayback() {
+        if (!this.audio) return;
+        if (this.audio.paused) {
+          this.audio.play().catch(err => console.warn('Lỗi phát nhạc:', err));
+        } else {
+          this.audio.pause();
+        }
+      },
+
+      updateUI() {
+        const icon = document.getElementById('audio-icon');
+        if (!icon) return;
+        if (this.isPlaying) {
+          icon.classList.remove('fa-volume-xmark');
+          icon.classList.add('fa-volume-high');
+        } else {
+          icon.classList.remove('fa-volume-high');
+          icon.classList.add('fa-volume-xmark');
+        }
+      },
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      musicManager.init();
+      document.getElementById('toggle-audio').addEventListener('click', () => {
+        musicManager.togglePlayback();
+      });
+    });
+  </script>
+</body>
+</html>
